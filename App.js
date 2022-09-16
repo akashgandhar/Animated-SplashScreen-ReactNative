@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import SplashScreen from './pages/SplashScreen';
 import Home from './pages/Home';
+import PrintPdf from './pages/ExportPDF';
 // import ThirdPage from './pages/ThirdPage';
 
 const Stack = createStackNavigator();
@@ -25,16 +26,17 @@ function App() {
           name="Home"
           component={Home}
           options={{
-            headerMode:'none' //Set Header color
+            headerMode:'none', //Set Header color
+            headerVisible: false,
           }}
         />
-        {/* <Stack.Screen
-          name="ThirdPage"
-          component={ThirdPage}
+        <Stack.Screen
+          name="ExportPDF"
+          component={PrintPdf}
           options={{
             headerMode:'none' //Set Header color
           }}
-        /> */}
+        /> 
       </Stack.Navigator>
     </NavigationContainer>
   );
