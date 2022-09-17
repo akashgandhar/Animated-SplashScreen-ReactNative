@@ -1,174 +1,113 @@
-import * as React from 'react';
-import { View, Text, TouchableOpacity,TextInput,StyleSheet,Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+    View,
+    StyleSheet,
+    Image,
+    Text,
+    TextInput,
+    Alert,
+} from 'react-native';
+import CustomButton from './utils/CustomButton';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+export default function Home({ navigation }) {
 
-class Home extends React.Component {
+    const [name, setName] = useState('');
+    const [org, setOrg] = useState('');
+    const [event, setEvent] = useState('');
 
-  constructor(props){
-    super()
-    this.state = {
-      organisation: '',
-      name: '',
-      event: ''
-   }
-  }
-  
+    useEffect(() => {
+        getData();
+    }, []);
 
-  render() {
+    const getData = () => {
+        try {
+            AsyncStorage.getItem('UserData')
+                .then(value => {
+                    if (value != null) {
+                        navigation.navigate('Home');
+                    }
+                })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const setData = async () => {
+        if (name.length == 0 || org.length == 0 || event.length == 0) {
+            Alert.alert('Warning!', 'Please write your data.')
+        } else {
+            try {
+                var user = {
+                    Name: name,
+                    Org: org,
+                    Event: event
+                }
+                await AsyncStorage.setItem('UserData', JSON.stringify(user));
+                navigation.navigate('ExportPDF');
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+
     return (
-      <>
-      <View style={{
-        position:'relative',
-        backgroundColor:'#6ABC56',
-        justifyContent: 'center',
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center"}}>
-        <Image source={{ uri: "https://firebasestorage.googleapis.com/v0/b/new-project-aa84e.appspot.com/o/icon.png?alt=media&token=d77b35fe-c813-4bd7-8c12-813d6e3ca9a3" }} 
-        style={{ width: '50%', height: '70%',padding:30,position:'absolute' }} />
-        
-      </View>
-      <View style={{backgroundColor:'#6ABC56'}}><Text style={{padding:25,textAlign:'center',fontSize:45}}>Details</Text></View>
-      <View style={styles.container}>
-          <View style={styles.inputView}>
+        <View style={styles.body} >
+            <Image
+                style={styles.logo}
+                source={require('../assets/icon.png')}
+            />
+            <Text style={styles.text}>
+                Details
+            </Text>
             <TextInput
-              style={styles.inputView}
-              placeholder="Organisation"
-              placeholderTextColor="#003f5c"
-              onChangeText={(org) => this.setState({ organisation: org })} />
-          </View>
-
-          <View style={styles.inputView}>
+                style={styles.input}
+                placeholder='Enter Organisation'
+                onChangeText={(value) => setOrg(value)}
+            />
             <TextInput
-              style={styles.inputView}
-              placeholder="Name"
-              placeholderTextColor="#003f5c"
-              onChangeText={(name) => this.setState({ name: name })} />
-          </View>
-
-          <View style={styles.inputView}>
+                style={styles.input}
+                placeholder='Enter name'
+                onChangeText={(value) => setName(value)}
+            />
             <TextInput
-              style={styles.inputView}
-              placeholder="Event Name"
-              placeholderTextColor="#003f5c"
-              onChangeText={(event) => this.setState({ event: event })} />
-          </View>
-
-          <TouchableOpacity style={styles.loginBtn} onPress={()=>{console.log(this.state)}}>
-            <Text style={styles.loginText}>SUBMIT</Text>
-          </TouchableOpacity>
-        </View></>
-  );
+                style={styles.input}
+                placeholder='Enter Event'
+                onChangeText={(value) => setEvent(value)}
+            />
+            <CustomButton
+                title='Submit'
+                color='#1eb900'
+                onPressFunction={setData}
+            />
+        </View>
+    )
 }
-}
-
-
-
-
-// const askPermission = async () => {
-//   try {
-//     const granted = await PermissionsAndroid.request(
-//       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-//       {
-//         title: "Certify Allow Storage Access",
-//         message:
-//           "Certify Needs Storage Permmision " +
-//           "so you can save Generated PDF.",
-//         buttonNeutral: "Ask Me Later",
-//         buttonNegative: "Cancel",
-//         buttonPositive: "OK"
-//       }
-//     );
-//     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-//       console.log("You can use the camera");
-//     } else {
-//       console.log("Camera permission denied");
-//     }
-//   } catch (err) {
-//     console.warn(err);
-//   }
-// };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1.5,
-    backgroundColor: "#6ABC56",
-    alignItems: "center",
-    justifyContent: "center",
-  },
- 
-  image: {
-    marginBottom: 40,
-  },
- 
-  inputView: {
-    backgroundColor: "#FFC0CB",
-    borderRadius: 30,
-    width: "70%",
-    height: 45,
-    marginBottom: 20,
- 
-    alignItems: "center",
-  },
- 
-  TextInput: {
-    height: 50,
-    flex: 1,
-    padding: 10,
-    marginLeft: 20,
-  },
- 
-  forgot_button: {
-    height: 30,
-    marginBottom: 30,
-  },
- 
-  loginBtn: {
-    width: "40%",
-    borderRadius: 25,
-    height: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 40,
-    backgroundColor: "skyblue",
-  },
-});
-
-
-
-// const data = ()=>{
-//   const [name, setName] = useState("aksh")
-// }
-
-// const Home = () => {
-  
-//   return (
-//     <SafeAreaView style={{ flex: 1 }}>
-//       <View style={{ flex: 1, padding: 16 }}>
-//         <View
-//           style={{
-//             flex: 1,
-//             alignItems: 'center',
-//             justifyContent: 'center',
-//           }}>
-//           <Text
-//             style={{
-//               fontSize: 25,
-//               textAlign: 'center',
-//               marginBottom: 16
-//             }}>
-//             This is The Home Page.
-//           </Text>
-//           <TextInput placeholder='enter school name '>
-
-//           </TextInput>
-          
-//         </View>
-//       </View>
-//     </SafeAreaView>
-//   );
-// }
-
-
-
-export default Home;
+    body: {
+        flex: 1,
+        alignItems: 'center',
+        backgroundColor: '#6ABC56',
+    },
+    logo: {
+        width: 120,
+        height: 120,
+        margin: 60,
+    },
+    text: {
+        fontSize: 40,
+        color: '#ffffff',
+        marginBottom: 80,
+    },
+    input: {
+        width: 300,
+        borderWidth: 1,
+        borderColor: '#555',
+        borderRadius: 10,
+        backgroundColor: '#ffffff',
+        textAlign: 'center',
+        fontSize: 20,
+        marginBottom: 20,
+    }
+})

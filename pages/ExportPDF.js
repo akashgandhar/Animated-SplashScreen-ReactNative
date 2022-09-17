@@ -1,8 +1,66 @@
-import * as React from 'react';
-import { View, StyleSheet, Button, Platform, Text, TouchableOpacity, Image } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState, useEffect } from 'react';
+import {
+    StyleSheet,
+    View,
+    Text,
+    TouchableOpacity,
+    Image
+} from 'react-native';
 import * as Print from 'expo-print';
 import { shareAsync } from 'expo-sharing';
-import Home from './Home';
+
+
+export default function Home({ navigation, route }) {
+
+    const [org, setOrg] = useState('');
+    const [name, setName] = useState('');
+    const [event, setEvent] = useState('');
+
+    useEffect(() => {
+        getData();
+    }, []);
+
+    const getData = () => {
+        try {
+            AsyncStorage.getItem('UserData')
+                .then(value => {
+                    if (value != null) {
+                        let user = JSON.parse(value);
+                        setOrg(user.Org);
+                        setName(user.Name);
+                        setEvent(user.Event)
+                    }
+                })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    // const updateData = async () => {
+    //     if (name.length == 0) {
+    //         Alert.alert('Warning!', 'Please write your data.')
+    //     } else {
+    //         try {
+    //             var user = {
+    //                 Name: name
+    //             }
+    //             await AsyncStorage.mergeItem('UserData', JSON.stringify(user));
+    //             Alert.alert('Success!', 'Your data has been updated.');
+    //         } catch (error) {
+    //             console.log(error);
+    //         }
+    //     }
+    // }
+
+    // const removeData = async () => {
+    //     try {
+    //         await AsyncStorage.clear();
+    //         navigation.navigate('Login');
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }
 
     const html = `
   <html>
@@ -53,7 +111,7 @@ import Home from './Home';
     <body>
         <div class="container">
             <div class="logo">
-                An Organization  
+                ${org}  
             </div>
   
             <div class="marquee">
@@ -65,25 +123,20 @@ import Home from './Home';
             </div>
   
             <div class="person">
-                Joe Nathan
+                ${name}
             </div>
   
             <div class="reason">
-                For deftly defying the laws of gravity<br/>
-                and flying high
+                For ${event}
             </div>
         </div>
     </body>
   </html>
   `;
-  
 
-
-export default function PrintPdf({navigation}) {
   const [selectedPrinter, setSelectedPrinter] = React.useState();
 
   const print = async () => {
-    // On iOS/android prints the given html. On web prints the HTML from the current page.
     await Print.printAsync({
       html: html,
       printerUrl: selectedPrinter?.url, // iOS only
@@ -91,7 +144,6 @@ export default function PrintPdf({navigation}) {
   }
 
   const printToFile = async () => {
-    // On iOS/android prints the given html. On web prints the HTML from the current page.
     const { uri } = await Print.printToFileAsync({
       html
     });
@@ -99,15 +151,9 @@ export default function PrintPdf({navigation}) {
     await shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
   }
 
-  const selectPrinter = async () => {
-    const printer = await Print.selectPrinterAsync(); // iOS only
-    setSelectedPrinter(printer);
-  }
-
-  
-
-  return (
-    
+    return (
+        // 
+        
         <View style={styles.MainContainer}>
           <TouchableOpacity onPress={print}>
             <Image
@@ -130,46 +176,25 @@ export default function PrintPdf({navigation}) {
             <Text style={styles.text}>download PDF</Text>
           </TouchableOpacity>
         </View>
-      
-    
-    // <View style={{flex:1,alignContent:'center'}}>
-      
-    //   <View style={styles.spacer} />
-    //   <Button title='Print' onPress={print} /><Button title='Print' onPress={print} />
-    //   <Button title='Print to PDF file' onPress={printToFile} />
-    //   <Button title='Print' onPress={print} />
-    //   {/* {Platform.OS === 'android' &&
-    //     <>
-    //       <View style={styles.spacer} />
-    //       <Button title='Select printer' onPress={selectPrinter} />
-    //       <View style={styles.spacer} />
-    //       {selectedPrinter ? <Text style={styles.printer}>{`Selected printer: ${selectedPrinter.name}`}</Text> : undefined}
-    //     </>
-    //   } */}
-    // </View>
-  );
+
+    )
 }
 
 const styles = StyleSheet.create({
-    MainContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#123',
-    },
-    text: {
-      color: 'white',
-      textAlign: 'center',
-      fontSize: 25,
-    },
-    ImageStyle: {
-      height: 150,
-      width: 150,
-      resizeMode: 'center',
-    },
-  });
-// const styles = StyleSheet.create({
-//   spacer: {
-//     margin: 5,
-//   },
-// })
+  MainContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#123',
+  },
+  text: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 25,
+  },
+  ImageStyle: {
+    height: 150,
+    width: 150,
+    resizeMode: 'center',
+  },
+});
