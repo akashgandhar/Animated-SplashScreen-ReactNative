@@ -1,20 +1,18 @@
 import * as React from 'react';
-import { StatusBar } from "expo-status-bar";
-import { useState } from 'react';
-import { Button, View, Text, TouchableOpacity,TextInput,StyleSheet,Image, PermissionsAndroid } from 'react-native';
-import RNHTMLtoPDF from 'react-native-html-to-pdf';
-import FileViewer from 'react-native-file-viewer';
-import { Alert } from 'react-native';
+import { View, Text, TouchableOpacity,TextInput,StyleSheet,Image } from 'react-native';
 
 
 class Home extends React.Component {
 
   constructor(props){
     super()
-    this.state={organisation:""}
-    this.state={name:""}
-    this.state={event:""}
+    this.state = {
+      organisation: '',
+      name: '',
+      event: ''
+   }
   }
+  
 
   render() {
     return (
@@ -53,11 +51,10 @@ class Home extends React.Component {
               style={styles.inputView}
               placeholder="Event Name"
               placeholderTextColor="#003f5c"
-              secureTextEntry={true}
               onChangeText={(event) => this.setState({ event: event })} />
           </View>
 
-          <TouchableOpacity style={styles.loginBtn} onPress={()=>{this.props.navigation.replace('ExportPDF');}}>
+          <TouchableOpacity style={styles.loginBtn} onPress={()=>{console.log(this.state)}}>
             <Text style={styles.loginText}>SUBMIT</Text>
           </TouchableOpacity>
         </View></>

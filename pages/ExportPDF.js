@@ -2,8 +2,7 @@ import * as React from 'react';
 import { View, StyleSheet, Button, Platform, Text, TouchableOpacity, Image } from 'react-native';
 import * as Print from 'expo-print';
 import { shareAsync } from 'expo-sharing';
-
-const createHtml = () => {
+import Home from './Home';
 
     const html = `
   <html>
@@ -77,8 +76,7 @@ const createHtml = () => {
     </body>
   </html>
   `;
-  return html;
-   }
+  
 
 
 export default function PrintPdf({navigation}) {
@@ -87,7 +85,7 @@ export default function PrintPdf({navigation}) {
   const print = async () => {
     // On iOS/android prints the given html. On web prints the HTML from the current page.
     await Print.printAsync({
-      html: createHtml(),
+      html: html,
       printerUrl: selectedPrinter?.url, // iOS only
     });
   }
@@ -109,6 +107,7 @@ export default function PrintPdf({navigation}) {
   
 
   return (
+    
         <View style={styles.MainContainer}>
           <TouchableOpacity onPress={print}>
             <Image
