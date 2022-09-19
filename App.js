@@ -7,7 +7,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import SplashScreen from './pages/SplashScreen';
 import Home from './pages/Home';
 import PrintPdf from './pages/ExportPDF';
-// import ThirdPage from './pages/ThirdPage';
 
 const Stack = createStackNavigator();
 
